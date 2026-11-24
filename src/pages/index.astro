@@ -1,0 +1,261 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import {
+  person, nav, heroMeta, marquee, stats, projects, archive, jobs, education, stack, offLinks, achievements, footerLinks,
+} from '../data/site';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<Base>
+  <div id="loader" aria-hidden="true">
+    <span class="loader-count">000</span>
+    <span class="loader-panel"></span>
+  </div>
+
+  <header class="hero" id="top">
+    <canvas class="hero-canvas" aria-hidden="true"></canvas>
+    <div class="hero-shade" aria-hidden="true"></div>
+
+    <nav class="nav" aria-label="Primary">
+      <a class="mono strong nav-brand" href="#top">Umraz Khan ©26</a>
+      <ul class="nav-links">
+        {nav.map((l) => <li><a class="mono link" href={l.href}>{l.label}</a></li>)}
+      </ul>
+      <a class="pill pill-light mono strong" href={`mailto:${person.email}`}>
+        <span class="dot" aria-hidden="true"></span>Open to work
+      </a>
+    </nav>
+
+    <div class="hero-content">
+      <div class="hero-lede-row">
+        <p class="lede intro-fade">{person.lede}</p>
+        <a class="mono link intro-fade" href="#profile">(Scroll) <span aria-hidden="true">↓</span></a>
+      </div>
+      <h1 class="hero-name" data-split>{person.name}</h1>
+      <dl class="hero-meta intro-fade">
+        {heroMeta.map((m) => (
+          <div>
+            <dt class="mono strong accent">{m.label}</dt>
+            <dd>{m.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </header>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      {[0, 1].map(() => (
+        <div class="marquee-group">
+          {marquee.map((w) => (
+            <>
+              <span>{w}</span>
+              <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 6v12M17.196 9 6.804 15M6.804 9l10.392 6" /></svg>
+            </>
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <main id="main">
+    <section class="section light" id="profile" aria-labelledby="profile-label">
+      <div class="profile-row">
+        <p class="label" id="profile-label"><span class="mono strong accent">(01)</span><span class="mono strong">Profile</span></p>
+        <div class="statement">
+          <p class="statement-text" data-reveal>{person.statement}</p>
+          <div class="statement-foot" data-reveal>
+            <p class="body muted">{person.about}</p>
+            <a class="pill pill-dark mono strong" href={person.resume} download>
+              Download résumé
+              <svg class="accent-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 7 10 10M17 7v10H7" /></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <ul class="stats">
+        {stats.map((s) => (
+          <li class="stat rule" data-reveal>
+            <span class:list={['stat-value display', { accent: s.hot }]} data-count={s.value}>{s.value}</span>
+            <span class="stat-caption muted">{s.caption}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="section dark" id="work" aria-labelledby="work-title">
+      <div class="section-head">
+        <div>
+          <p class="label row"><span class="mono strong accent">(02)</span><span class="mono strong">Selected work</span></p>
+          <h2 class="display title" id="work-title"><span class="rise">Things I built</span></h2>
+        </div>
+        <p class="aside">Four I'd show you first, then the rest of the archive.</p>
+      </div>
+
+      <div class="work-grid">
+        {projects.map((p, i) => (
+          <article class:list={['project', { wide: p.wide }]} data-reveal>
+            <a class="cover" href={p.href} target="_blank" rel="noopener" aria-label={`${p.title}: open project`}>
+              <Image
+                src={p.image}
+                alt={p.alt}
+                widths={[480, 820, 1240, 1640]}
+                sizes={p.wide ? '(max-width: 900px) 100vw, 60vw' : '(max-width: 900px) 100vw, 38vw'}
+                loading="lazy"
+                decoding="async"
+              />
+              <span class="cover-tint" aria-hidden="true"></span>
+              <span class="cover-top mono strong" aria-hidden="true"><span>{p.no} / {pad(projects.length)}</span><span>{p.year}</span></span>
+              <span class="cover-open" aria-hidden="true">
+                <span class="cover-open-label mono strong">View project</span>
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10" /></svg>
+              </span>
+            </a>
+            <div class="project-info">
+              <h3 class="display project-title">{p.title}</h3>
+              <p class="body muted">{p.description}</p>
+              <p class="mono accent stack-line">{p.stack.join(' · ')}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div class="archive">
+        <div class="archive-head">
+          <h3 class="serif-italic archive-title">The archive</h3>
+          <p class="mono muted">{archive.length} more · 2018 to 2025</p>
+        </div>
+        <ul class="archive-list">
+          {archive.map((r) => {
+            const Tag = r.href ? 'a' : 'div';
+            const attrs = r.href ? { href: r.href, target: '_blank', rel: 'noopener' } : {};
+            return (
+              <li data-reveal>
+                <Tag class="archive-row" {...attrs}>
+                  <span class="mono strong accent a-no">{r.no}</span>
+                  <span class="a-name">{r.name}</span>
+                  <span class="a-desc muted">{r.desc}</span>
+                  <span class="mono muted a-stack">{r.stack}</span>
+                  <span class="mono a-year">{r.year}
+                    {r.href && <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg>}
+                  </span>
+                </Tag>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </section>
+
+    <section class="section light" id="experience" aria-labelledby="exp-title">
+      <div class="section-head">
+        <div>
+          <p class="label row"><span class="mono strong accent">(03)</span><span class="mono strong">Experience</span></p>
+          <h2 class="display title" id="exp-title"><span class="rise">Four years in</span></h2>
+        </div>
+      </div>
+      <ol class="jobs">
+        {jobs.map((j) => (
+          <li class="job" data-reveal>
+            <p class="job-years display" aria-label={`${j.from} to ${j.to}`}>
+              <span>{j.from}</span><span class="dash" aria-hidden="true"></span><span class:list={[{ accent: j.current }]}>{j.to}</span>
+            </p>
+            <div class="job-role">
+              <h3 class="serif job-title">{j.role}</h3>
+              <p class="job-company">{j.company}</p>
+              <p class="mono muted">{j.dates}</p>
+            </div>
+            <ul class="job-bullets">
+              {j.bullets.map((b, k) => (
+                <li><span class="mono strong accent" aria-hidden="true">{pad(k + 1)}</span><span class="body">{b}</span></li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ol>
+      <div class="education" data-reveal>
+        <span class="mono strong edu-label">Education</span>
+        <span class="serif edu-degree">{education.degree}</span>
+        <span class="mono">{education.details}</span>
+      </div>
+    </section>
+
+    <section class="section dark" id="stack" aria-labelledby="stack-title">
+      <div class="section-head">
+        <div>
+          <p class="label row"><span class="mono strong accent">(04)</span><span class="mono strong">Stack</span></p>
+          <h2 class="display title" id="stack-title"><span class="rise">Tools I reach for</span></h2>
+        </div>
+      </div>
+      <div class="stack-cols">
+        {stack.map((g) => (
+          <div class:list={['stack-col', { hot: g.hot }]} data-reveal>
+            <div class="stack-head">
+              <h3 class="serif-italic">{g.title}</h3>
+              <span class="mono muted" aria-hidden="true">{pad(g.items.length)}</span>
+            </div>
+            <ul>{g.items.map((it) => <li>{it}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+
+      <div class="off" id="off-the-clock">
+        <div class="off-intro" data-reveal>
+          <p class="label row"><span class="mono strong accent">(05)</span><span class="mono strong">Off the clock</span></p>
+          <h2 class="serif off-statement">I learned to build by learning how things break.</h2>
+          <ul class="off-links">
+            {offLinks.map((l) => (
+              <li>
+                <a class="pill pill-outline mono" href={l.href} target="_blank" rel="noopener me">
+                  {l.label}
+                  <svg class="accent-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <ol class="achievements">
+          {achievements.map((a, i) => (
+            <li data-reveal>
+              <span class="display ach-no accent" aria-hidden="true">{pad(i + 1)}</span>
+              <span class="ach-text"><strong>{a.title}</strong><span class="muted">{a.desc}</span></span>
+              <span class="mono muted ach-tag">{a.tag}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="contact" id="contact">
+    <div class="contact-top">
+      <p class="mono strong">(06)&nbsp;&nbsp;Contact</p>
+      <p class="serif-italic contact-aside">Open to frontend and full-stack roles, and to anything that needs to load faster.</p>
+    </div>
+    <h2 class="display contact-title"><span class="rise">Let's make it fast.</span></h2>
+    <div class="email-row" data-reveal>
+      <a class="serif email" href={`mailto:${person.email}`}>{person.email}</a>
+      <button class="email-copy" type="button" data-copy={person.email}>
+        <span class="mono strong" data-copy-label>Copy email</span>
+        <span class="email-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M7 7h10v10" /></svg>
+        </span>
+      </button>
+    </div>
+    <div class="foot">
+      <p class="mono strong">© 2026 Umraz Khan</p>
+      <ul class="foot-links">
+        {footerLinks.map((l) => <li><a class="mono strong link" href={l.href} target="_blank" rel="noopener me">{l.label}</a></li>)}
+      </ul>
+      <p class="mono strong">Bengaluru · 12.97° N, 77.59° E</p>
+    </div>
+  </footer>
+
+  <div class="cursor mono strong" aria-hidden="true">View</div>
+
+  <script>
+    import '../scripts/main';
+  </script>
+</Base>
